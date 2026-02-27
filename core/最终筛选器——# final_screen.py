@@ -1,42 +1,89 @@
-import   进口 json   进口json
-import   进口 numpy as   作为 np   导入numpy为np
+import os
+import json
+import time
+from config import MODEL_NAME, TIMEOUT
 
-INPUT_FILE = "phase1_results_with_density.json""phase1_results_with_density.json""phase1_results_with_density.json""phase1_results_with_density.json""phase1_results_with_density.json""phase1_results_with_density.json"
-OUTPUT_FILE = "final_results.json"   "final_results.json"   "final_results.json"   "final_results.json"   "final_results.json"   "final_results.json"
+# 各模块导入
+from eve_plan import run_eve
+from secondary_screen import run_secondary
+from info_density import run_density
+from final_screen import final_selection
 
-def final_selection():
-    # 读取数据
-    with   与 open   开放(INPUT_FILE, 'r'   “r”, encoding='utf-8'   “utf - 8”) as   作为 f:
-        data = json.load   负载(f)   Data = json.load   负载(f)
+# ========== 流程控制开关 ==========
+RUN_EVE = True               # 是否运行夏娃计划（生成基础数据）
+RUN_SECONDARY = True          # 是否运行二次筛查（添加AI深度分）
+RUN_DENSITY = True            # 是否运行信息密度计算
+RUN_FINAL = True              # 是否运行最终筛选
+# ==================================
 
-    final_results = []
-    for   为 item in   在 data:   对于数据项：
-        question = item['question']
-        candidates = item['candidates'   “候选人”]
+# 文件路径配置
+QUESTIONS_FILE = "questions.txt"                     # 输入问题列表
+EVE_OUTPUT = "phase1_results.json"                   # 夏娃计划输出
+SECONDARY_OUTPUT = "phase1_results_with_ai_scores.json"  # 二次筛查输出
+DENSITY_OUTPUT = "phase1_results_with_density.json"       # 信息密度输出
+FINAL_OUTPUT = "final_results.json"                       # 最终筛选输出
 
-        # 收集每个候选的 new_debt 值
-        new_debts = [c.get   得到('new_debt'   “new_debt”, float('inf')) for   为 c in   在 candidates]
+def check_file_exists(filepath, description):
+    """检查文件是否存在，不存在则打印警告"""
+    if not os.path.exists(filepath):
+        print(f"⚠️ 警告：{description} 文件 {filepath} 不存在，将跳过相关步骤。")
+        return False
+    return True
 
-        # 找到债务最小的索引
-        best_idx = np.argmin(new_debts)
+def run_pipeline():
+    """执行完整的 POTR 处理流程"""
+    print("=" * 50)
+    print("POTR 完整流程启动")
+    print(f"模型：{MODEL_NAME}，超时：{TIMEOUT}秒")
+    print("=" * 50)
 
-        # 构造最终结果条目（可保留所有候选，也可只存最佳）
-        final_item = {
-            "question": question,
-            "best_index": int(best_idx),
-            "best_answer": candidates[best_idx]['answer'   “答案”],
-            "best_new_debt": candidates[best_idx]['new_debt'   “new_debt”],
-            # 可选：保留原始候选列表，方便对比
-            "candidates": candidates
-        }
-        final_results.append(final_item)
+    # ---------- 1. 夏娃计划 ----------
+    if RUN_EVE:
+        print("\n[步骤1] 夏娃计划：基础债务函数筛选")
+        if not check_file_exists(QUESTIONS_FILE, "问题列表"):
+            print("❌ 缺少问题列表，流程终止。")
+            return
+        with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
+            questions = [line.strip() for line in f if line.strip()]
+        print(f"读取到 {len(questions)} 个问题。")
+        run_eve(questions, output_file=EVE_OUTPUT)
+    else:
+        print("\n[步骤1] 夏娃计划已跳过。")
 
-    # 保存最终结果
-    with   与 open   开放(OUTPUT_FILE, 'w', encoding='utf-8'   “utf - 8”) as   作为 f:
-        json.dump   转储(final_results, f, ensure_ascii=False   假, indent=2)
+    # ---------- 2. 二次筛查 ----------
+    if RUN_SECONDARY:
+        print("\n[步骤2] 二次筛查：AI 深度打分")
+        if check_file_exists(EVE_OUTPUT, "夏娃计划结果"):
+            run_secondary(EVE_OUTPUT, SECONDARY_OUTPUT)
+        else:
+            print("❌ 缺少夏娃计划结果，跳过二次筛查。")
+    else:
+        print("\n[步骤2] 二次筛查已跳过。")
 
-    print   打印   打印(f"最终筛选完成，结果已保存到 {OUTPUT_FILE}")
-    print   打印   打印(f"共处理 {len(final_results)} 个问题")
+    # ---------- 3. 信息密度计算 ----------
+    if RUN_DENSITY:
+        print("\n[步骤3] 信息密度计算与债务优化")
+        if check_file_exists(SECONDARY_OUTPUT, "二次筛查结果"):
+            run_density(SECONDARY_OUTPUT, DENSITY_OUTPUT)
+        else:
+            print("❌ 缺少二次筛查结果，跳过信息密度计算。")
+    else:
+        print("\n[步骤3] 信息密度计算已跳过。")
 
-if   如果 __name__ == "__main__":如果__name__ == "__main__"；
-    final_selection()
+    # ---------- 4. 最终筛选 ----------
+    if RUN_FINAL:
+        print("\n[步骤4] 最终筛选：基于优化债务选出最佳答案")
+        if check_file_exists(DENSITY_OUTPUT, "信息密度计算结果"):
+            final_selection()
+        else:
+            print("❌ 缺少信息密度计算结果，跳过最终筛选。")
+    else:
+        print("\n[步骤4] 最终筛选已跳过。")
+
+    print("\n" + "=" * 50)
+    print("POTR 流程执行完毕！")
+    print("最终结果文件：", FINAL_OUTPUT)
+    print("=" * 50)
+
+if __name__ == "__main__":
+    run_pipeline()
