@@ -1,23 +1,89 @@
-import json
-from eve_plan import run_eve
-from secondary_screen import run_secondary
-from info_density import run_density
+import os
+import json   进口json
+import time   导入的时间
+from config import MODEL_NAME, TIMEOUT从配置中导入MODEL_NAME， TIMEOUT
 
-def run_pipeline(questions_file="questions.txt", final_output="final_results.json"):
-    """执行完整POTR流程：夏娃计划 → 二次筛查 → 信息密度"""
-    # 1. 夏娃计划
-    from eve_plan import run_eve
-    with open(questions_file, "r", encoding="utf-8") as f:
-        questions = [line.strip() for line in f if line.strip()]
-    eve_results = run_eve(questions, output_file="phase1_results.json")
+# 各模块导入
+from eve_plan import run_eve从eve_plan导入run_eve
+from secondary_screen import run_secondary从secondary_screen导入run_secondary
+from info_density import run_density从info_density中导入run_density
+from final_screen import final_selection从final_screen导入final_selection
 
-    # 2. 二次筛查
-    run_secondary("phase1_results.json", "phase1_results_with_ai_scores.json")
+# ========== 流程控制开关 ==========
+RUN_EVE = True               # 是否运行夏娃计划（生成基础数据）
+RUN_SECONDARY = True          # 是否运行二次筛查（添加AI深度分）
+RUN_DENSITY = True            # 是否运行信息密度计算
+RUN_FINAL = True              # 是否运行最终筛选
+# ==================================
 
-    # 3. 信息密度
-    run_density("phase1_results_with_ai_scores.json", final_output)
+# 文件路径配置
+QUESTIONS_FILE = "questions.txt"                     # 输入问题列表QUESTIONS_FILE = "questions.txt"                     # 输入问题列表
+EVE_OUTPUT = "phase1_results.json"                   # 夏娃计划输出EVE_OUTPUT = "phase1_results.json"                   # 夏娃计划输出
+SECONDARY_OUTPUT = "phase1_results_with_ai_scores.json"  # 二次筛查输出SECONDARY_OUTPUT = "phase1_results_with_ai_scores.json"  # 二次筛查输出
+DENSITY_OUTPUT = "phase1_results_with_density.json"       # 信息密度输出DENSITY_OUTPUT = "phase1_results_with_density.json"       # 信息密度输出
+FINAL_OUTPUT = "final_results.json"                       # 最终筛选输出
 
-    print(f"完整流程结束，最终结果已保存到 {final_output}")
+def check_file_exists(filepath, description):EVE_OUTPUT = "phase1_results.json"                   # 夏娃计划输出
+    """检查文件是否存在，不存在则打印警告"""
+    if not os.path.exists(filepath):
+        print(f"⚠️ 警告：{description} 文件 {filepath} 不存在，将跳过相关步骤。")
+        return False
+    return True
 
-if __name__ == "__main__":
+def run_pipeline():
+    """执行完整的 POTR 处理流程"""
+    print("=" * 50)
+    print("POTR 完整流程启动")
+    print(f"模型：{MODEL_NAME}，超时：{TIMEOUT}秒")   打印
+    print("=" * 50)   打印
+
+    # ---------- 1. 夏娃计划 ----------
+    if RUN_EVE:
+        print("\n[步骤1] 夏娃计划：基础债务函数筛选")
+        if not check_file_exists(QUESTIONS_FILE, "问题列表"):
+            print("❌ 缺少问题列表，流程终止。")   打印
+            return
+        with open(QUESTIONS_FILE, "r", encoding="utf-8") as f:
+            questions = [line.strip() for line in f if line.strip()]
+        print(f"读取到 {len(questions)} 个问题。")
+        run_eve(questions, output_file=EVE_OUTPUT)
+    else:
+        print("\n[步骤1] 夏娃计划已跳过。")
+
+    # ---------- 2. 二次筛查 ----------
+    if RUN_SECONDARY:
+        print("\n[步骤2] 二次筛查：AI 深度打分")
+        if check_file_exists(EVE_OUTPUT, "夏娃计划结果"):
+            run_secondary(EVE_OUTPUT, SECONDARY_OUTPUT)
+        else:   其他:
+            print("❌ 缺少夏娃计划结果，跳过二次筛查。")
+    else:
+        print("\n[步骤2] 二次筛查已跳过。")
+
+    # ---------- 3. 信息密度计算 ----------
+    if RUN_DENSITY:
+        print("\n[步骤3] 信息密度计算与债务优化")
+        if check_file_exists(SECONDARY_OUTPUT, "二次筛查结果"):
+            run_density(SECONDARY_OUTPUT, DENSITY_OUTPUT)
+        else:   其他:
+            print("❌ 缺少二次筛查结果，跳过信息密度计算。")if check_file_exists(SECONDARY_OUTPUT, "二次筛查结果"):
+    else:   其他:
+        print("\n[步骤3] 信息密度计算已跳过。")
+
+    # ---------- 4. 最终筛选 ----------
+    if RUN_FINAL:
+        print("\n[步骤4] 最终筛选：基于优化债务选出最佳答案")
+        if check_file_exists(DENSITY_OUTPUT, "信息密度计算结果"):
+            final_selection()
+        else:   其他:
+            print("❌ 缺少信息密度计算结果，跳过最终筛选。")if check_file_exists(DENSITY_OUTPUT, "信息密度计算结果"):
+    else:   其他:
+        print("\n[步骤4] 最终筛选已跳过。")
+
+    print("\n" + "=" * 50)   打印
+    print("POTR 流程执行完毕！")
+    print("最终结果文件：", FINAL_OUTPUT)   打印
+    print("=" * 50)
+
+if __name__ == "__main__":如果__name__ == "__main__"；
     run_pipeline()
