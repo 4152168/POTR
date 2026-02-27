@@ -64,7 +64,7 @@ POTR/
 │   ├── secondary_screen.py   # 二次筛查（AI深度打分）
 │   ├── info_density.py       # 信息密度计算与优化债务
 │   └── pipeline.py           # 完整流程整合
-│
+│   └── final_screen.py       # 最终筛选器
 ├── analyze_default.py        # 统计分析脚本
 ├── config.py                 # 配置文件（模型名、超时等）
 ├── example_data.json         # 示例数据（106条测试问题）
