@@ -1,4 +1,3 @@
-# eve_plan.py
 import requests
 import json
 import numpy as np
