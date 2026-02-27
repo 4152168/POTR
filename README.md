@@ -1,12 +1,5 @@
 # POTR (Predictive & Optimized Thinking Robot)
-
-# POTR（预测优化思维机器人）
-
 ## 预测优化思维机器人 —— 让 AI 学会自我思考的工具
-
-POTR 是一个轻量级工具，它让 AI 对自己的输出进行反思和优化。
-通过让 AI 自我评估答案的深度，并结合信息密度指标，POTR 能自动筛选出既简洁又有深度的最佳回答。
-
 ---
 
 ## English Introduction / 英语介绍
