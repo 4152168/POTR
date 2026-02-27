@@ -47,7 +47,7 @@ ollama pull deepseek-r1:8b   # 或替换为其他模型
 from potr import POTR
 
 bot = POTR(model="deepseek-r1:8b")
-question = "什么是意识？"#（可以列很多的你可以试着先10个，然后如果是你要用的你可以在跑更多的）
+question = "什么是意识？"#（这个地方你可以试着先列10个，然后如果是你要用的你模型跑更多的可以自定义（大方向都是差不多的））
 
 best_answer = bot.think(question)
 print(best_answer)
