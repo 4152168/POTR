@@ -1,10 +1,10 @@
-import   进口   进口的请求 requests
-import   进口   进口json json
-import   进口   导入numpy为np numpy as   作为 np
-from   从 sentence_transformers import   进口 SentenceTransformer
-import   进口   导入的时间 time
-import   进口 random
-from   从 config import   进口 OLLAMA_URL, MODEL_NAME, LENGTH_WEIGHT, TIMEOUT
+import requests
+import json
+import numpy as np
+from sentence_transformers import SentenceTransformer
+import time
+import random
+from config import OLLAMA_URL, MODEL_NAME, LENGTH_WEIGHT, TIMEOUT
 
 # 初始化语义编码器（用于计算相关性）
 encoder = SentenceTransformer('paraphrase-MiniLM-L3-v2')
@@ -23,18 +23,18 @@ ANGLE_TEMPLATES = [
 
 def generate_real_answer(prompt):
     """调用真实模型生成答案"""
-    payload =    有效载荷= {{
-           “model": MODEL_NAME,"model   "model"": MODEL_NAME,
-           "prompt": prompt,"prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt"   "prompt": prompt,
-           "stream": False   假,"stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream"   "stream": False   假,
-           "options": {"options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options"   "options": {
-            "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature"   "temperature": 0.8,
-               "top_p": 0.9,"top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p"   "top_p": 0.9,
-            "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens"   "max_tokens": 150
+    payload = {
+        "model": MODEL_NAME,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.8,
+            "top_p": 0.9,
+            "max_tokens": 150
         }
     }
-       试一试:try   试一试:
-        resp = requests.post(OLLAMA_URL, json=payload, timeout=TIMEOUT)Resp =请求。post（OLLAMA_URL, json=payload, timeout= timeout）
+    try:
+        resp = requests.post(OLLAMA_URL, json=payload, timeout=TIMEOUT)
         return resp.json()['response'].strip()
     except Exception as e:
         print(f"生成答案失败: {e}")
