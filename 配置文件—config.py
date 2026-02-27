@@ -1,15 +1,20 @@
-# ================== POTR 项目配置文件 ==================
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "deepseek-r1:8b"           # 用于二次筛查的模型（可换 qwen2.5:7b-q4_0）
-TIMEOUT = 60                            # 请求超时时间（秒）
-TEMPERATURE = 0.2                       # 打分时温度（越低越稳定）
+# config.py
+# POTR 项目配置文件
 
-# 债务函数权重（夏娃计划）
-LENGTH_WEIGHT = 0.3                      # 长度惩罚权重
-RELEVANCE_WEIGHT = 0.7                   # 语义相关性权重
+# Ollama 服务地址
+OLLAMA_URL = "http://localhost:11434/api/generate"OLLAMA_URL = "http://localhost:11434/api/generate""http://localhost:11434/api/generate""http://localhost:11434/api/generate""http://localhost:11434/api/generate""http://localhost:11434/api/generate""http://localhost:11434/api/generate""http://localhost:11434/api/generate"
 
-# 信息密度计算参数
-DENSITY_BASE = 100                       # 密度公式中的缩放因子
-NEW_DEBT_ORIG_WEIGHT = 0.7                # 新债务中原债务权重
-NEW_DEBT_DENSITY_WEIGHT = 0.3              # 新债务中密度权重
-# ======================================================
+# 默认使用的模型（可根据需要修改）
+MODEL_NAME = "deepseek-r1:8b"   # 推荐替换为 qwen2.5:7b-q4_0 以加快速度
+
+# 超时设置（秒）
+TIMEOUT = 60
+
+# 债务函数权重（长度惩罚占比，相关性惩罚占比为 1-LENGTH_WEIGHT）
+LENGTH_WEIGHT = 0.3
+
+# 信息密度计算基数
+DENSITY_BASE = 100
+
+# 优化债务的权重（原始债务权重，信息密度倒数权重为 1-ORIGINAL_WEIGHT）
+ORIGINAL_WEIGHT = 0.7
