@@ -1,4 +1,3 @@
-# config.py
 # POTR 项目配置文件
 
 # Ollama 服务地址
