@@ -45,6 +45,7 @@ ollama pull deepseek-r1:8b   # 或替换为其他模型
 
 ```python
 from potr import POTR
+#记得添加questions.txt(你想添加的问题)
 
 bot = POTR(model="deepseek-r1:8b")
 question = "什么是意识？"#（这个地方你可以试着先列10个，然后如果是你要用的你模型跑更多的可以自定义（大方向都是差不多的））
