@@ -4,12 +4,19 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import time
 import random
-from config import OLLAMA_URL, MODEL_NAME, LENGTH_WEIGHT, TIMEOUT
 
-# 初始化语义编码器（用于计算相关性）
+# ========== 配置参数 ==========
+OLLAMA_URL = "http://localhost:11434/api/generate"
+MODEL_NAME = "deepseek-r1:8b"   # 可替换为 qwen2.5:7b-q4_0 以加快速度（或者你自己的模型）
+TIMEOUT = 60
+LENGTH_WEIGHT = 0.3            # 债务函数中长度惩罚的权重
+DENSITY_BASE = 100              # 信息密度计算基数（本脚本未使用，但保留）
+ORIGINAL_WEIGHT = 0.7           # 优化债务权重（本脚本未使用，但保留）
+
+# ========== 初始化模型 ==========
 encoder = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 
-# 提问角度模板（保证答案多样性）
+# ========== 提问模板 ==========
 ANGLE_TEMPLATES = [
     "{} 请用一句话回答。",
     "{} 请从哲学角度解释。",
@@ -21,6 +28,7 @@ ANGLE_TEMPLATES = [
     "你觉得{}和宇宙常数κ有什么关系？",
 ]
 
+# ========== 核心函数 ==========
 def generate_real_answer(prompt):
     """调用真实模型生成答案"""
     payload = {
