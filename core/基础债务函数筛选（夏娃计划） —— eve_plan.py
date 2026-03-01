@@ -16,7 +16,6 @@ ANGLE_TEMPLATES = [
     "{} 如果反过来想会怎样？",
     "用最简单的话说：{}",
     "详细解释一下：{}",
-    "你觉得{}和宇宙常数κ有什么关系？",
 ]
 
 def generate_real_answer(prompt):
