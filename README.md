@@ -33,7 +33,7 @@ POTR 是一个轻量级工具，使人工智能能够自我反思并优化自己
 
 ```bash
 pip install requests sentence-transformers numpy
-#测试环境：Python 3.9, deepseek-r1:8b, paraphrase-MiniLM-L3-v2”。
+#测试环境：Python 3.9, deepseek-r1:8b #或替换为其他模型, paraphrase-MiniLM-L3-v2”。
 ```
 
 ### 2. 下载模型（以 Ollama 为例）
