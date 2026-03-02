@@ -68,6 +68,7 @@ POTR/
 │   └── final_screen.py       # 最终筛选器
 │   └── pipeline.py           # 完整流程整合
 ├── config.py                 # 配置文件（模型名、超时等）
+├── requirements.txt
 ├── example_data.json         # 示例数据（106条测试问题）
 ├── README.md                 # 使用说明
 └── LICENSE                   # GPL v3 协议
