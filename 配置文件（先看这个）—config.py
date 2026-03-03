@@ -10,7 +10,7 @@ MODEL_NAME = "deepseek-r1:8b"   # 可换成 qwen2.5:7b-q4_0 等
 TIMEOUT = 120
 
 # 夏娃计划中长度惩罚的权重（相关性惩罚权重为 1 - LENGTH_WEIGHT）
-LENGTH_WEIGHT = 0.2
+LENGTH_WEIGHT = 0.2# 端点法核心：ORIGINAL_WEIGHT在0.08-0.12之间
 
 # 信息密度计算基数（数值越大密度值越大）
 DENSITY_BASE = 100
